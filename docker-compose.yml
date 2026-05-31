@@ -1,0 +1,74 @@
+services:
+  mysql:
+    image: faizansheikh11444/clo835-mysql:v1
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+    networks:
+      - clo835-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-ppw"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  blue:
+    image: faizansheikh11444/clo835-webapp:v1
+    container_name: blue
+    environment:
+      DBHOST: mysql
+      DBPORT: 3306
+      DBUSER: root
+      DBPWD: pw
+      DATABASE: employees
+      APP_COLOR: blue
+    ports:
+      - "8081:8080"
+    networks:
+      - clo835-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
+  pink:
+    image: faizansheikh11444/clo835-webapp:v1
+    container_name: pink
+    environment:
+      DBHOST: mysql
+      DBPORT: 3306
+      DBUSER: root
+      DBPWD: pw
+      DATABASE: employees
+      APP_COLOR: pink
+    ports:
+      - "8082:8080"
+    networks:
+      - clo835-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
+  lime:
+    image: faizansheikh11444/clo835-webapp:v1
+    container_name: lime
+    environment:
+      DBHOST: mysql
+      DBPORT: 3306
+      DBUSER: root
+      DBPWD: pw
+      DATABASE: employees
+      APP_COLOR: lime
+    ports:
+      - "8083:8080"
+    networks:
+      - clo835-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
+networks:
+  clo835-net:
+    driver: bridge
